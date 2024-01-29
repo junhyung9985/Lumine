@@ -5,7 +5,7 @@ import styles from "./Sidebar.module.css";
 export default function Sidebar() {
   return <div className={styles.wrap}>
     <div>
-      <img src={Collapse} />
+      <img className={styles.collapseBtn} src={Collapse} />
     </div>
     <div>
       <title>

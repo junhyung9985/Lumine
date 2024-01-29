@@ -1,5 +1,7 @@
 import styles from './App.module.css';
-import Sidebar from './Sidebar';
+import Button from './components/Button';
+import Canvas from './components/Canvas';
+import Sidebar from './components/Sidebar';
 
 function App() {
   return <main>
@@ -13,10 +15,12 @@ function App() {
     </nav>
     <div className={styles.body}>
       <div className={styles.canvasWrap}>
-        <canvas></canvas>
-        <div className={styles.button}>
-          Generate Code!
+        <div className={styles.canvas}>
+          <Canvas />
         </div>
+        <Button className={styles.button}>
+          Generate Code!
+        </Button>
       </div>
       <Sidebar />
     </div>

@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@projectstorm/react-canvas-core':
+    specifier: ^7.0.2
+    version: 7.0.2(@types/react@18.2.47)
   '@projectstorm/react-diagrams':
     specifier: ^7.0.3
     version: 7.0.3(@emotion/react@11.11.3)(@types/react@18.2.47)

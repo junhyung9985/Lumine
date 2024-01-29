@@ -11,5 +11,15 @@
 
 .wrap title {
     display:block;
-    font-size:22px;
+    font-size:20px;
+}
+
+.collapseBtn {
+    cursor:pointer;
+    width:16px;
+    transition:all ease-in 300ms;
+}
+
+.collapseBtn:hover {
+    filter: brightness(2);
 }
