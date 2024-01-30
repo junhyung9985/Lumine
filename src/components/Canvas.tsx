@@ -8,6 +8,8 @@ import createEngine, {
 
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 
+import CustomNodeExample from "../node-example";
+
 export default function Canvas() {
   const engine = createEngine();
   // node 1
@@ -37,5 +39,6 @@ export default function Canvas() {
   console.log("Links");
   console.log(model.getLinks());
   engine.setModel(model);
-  return <CanvasWidget className={styles.canvas} engine={engine} />;
+  // return <CanvasWidget className={styles.canvas} engine={engine} />;
+  return <CustomNodeExample className={styles.canvas}/>
 }
