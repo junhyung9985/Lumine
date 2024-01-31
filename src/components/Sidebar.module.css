@@ -1,7 +1,7 @@
 .wrap {
     background: #171919;
     height:100%;
-    width:360px;
+    min-width:var(--sidebar-width);
 }
 
 .wrap > * {
