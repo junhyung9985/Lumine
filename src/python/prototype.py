@@ -1,3 +1,5 @@
+import sys
+print = sys.stdout.write
 class Node:
     def __init__(self, name : str, input : int, output : int, activation : str | None = None , **kwargs):
         '''
@@ -21,6 +23,8 @@ class Node:
 class Input:
     def __init__(self, name : str, connected_to : int):
         '''
+            !!! There will be significant changes on this class definition "Input" -> "Variable"
+
             Class to store about the information of the input variables
 
             Args:
@@ -76,32 +80,32 @@ def WritePyTorch(structure:[[]], nodes : [Node],  path : str, inputs : [Input]):
     #print(nodes_name)
 
     # 기본적으로 출력해야 할 것들
-    f = open(path+'model.py', 'w')
-    f.write("import torch\nimport torch.nn as nn\n\n")
-    f.write("class Model(nn.Module):\n")
-    f.write("\tdef __init__(self):\n")
-    f.write("\t\tsuper().__init__()\n")
+    s = ""
+    s += "import torch\nimport torch.nn as nn\n\n"
+    s += "class Model(nn.Module):\n"
+    s += "\tdef __init__(self):\n"
+    s += "\t\tsuper().__init__()\n"
 
     # 각 노드별로 Constructor에 올려둠.
     for name,node in zip(nodes_name, nodes):
-        f.write("\t\tself."+name+" = "+specify(node)+"\n")
+        s += "\t\tself."+name+" = "+specify(node)+"\n"
         if(node.activation != None):
-            f.write("\t\tself."+name+"_act = "+specify_act(node.activation)+"\n")
+            s += "\t\tself."+name+"_act = "+specify_act(node.activation)+"\n"
 
     # Forward 메소드 작성 시작, 여기에 Input variables들도 넣어둠.
-    f.write("\n\tdef forward(self")
+    s += "\n\tdef forward(self"
     for x in inputs:
-        f.write(", ")
-        f.write(x.name)
-    f.write("):\n")
+        s += ", "
+        s += x.name
+    s += "):\n"
 
     start_nodes = [] # Queue for storing nodes.
 
     for x in inputs:
         idx = x.connected_to
-        f.write("\t\to{} = self.{}({})\n".format(idx, nodes_name[idx], x.name))
+        s += "\t\to{} = self.{}({})\n".format(idx, nodes_name[idx], x.name)
         if(nodes[idx].activation != None):
-            f.write("\t\to{} = self.{}_act(o{})\n".format(idx, nodes_name[idx], idx))
+            s += "\t\to{} = self.{}_act(o{})\n".format(idx, nodes_name[idx], idx)
         start_nodes.append(idx)
 
     # BFS since we do not think about residual connections.
@@ -114,22 +118,22 @@ def WritePyTorch(structure:[[]], nodes : [Node],  path : str, inputs : [Input]):
         del(start_nodes[0])
         for next, connected in enumerate(structure[idx]):
             if(connected == 1):
-                f.write("\t\to{} = self.{}(o{})\n".format(next, nodes_name[next], idx))
+                s += "\t\to{} = self.{}(o{})\n".format(next, nodes_name[next], idx)
                 if(nodes[next].activation != None):
-                    f.write("\t\to{} = self.{}_act(o{})\n".format(next, nodes_name[next], next))
+                    s += "\t\to{} = self.{}_act(o{})\n".format(next, nodes_name[next], next)
                 start_nodes.append(next)
 
-    f.write("\t\treturn o{}".format(ret))
+    s += "\t\treturn o{}".format(ret)
 
     '''
-    f.write("\t\to0 = self.m0(x)\n")
-    f.write("\t\to0 = self.m0_act(o0)\n")
-    f.write("\t\to1 = self.m1(o0)\n")
-    f.write("\t\to1 = self.m1_act(o1)\n")
-    f.write("\t\tret = o1\n")
-    f.write("\t\treturn ret\n")
+    s += "\t\to0 = self.m0(x)\n"
+    s += "\t\to0 = self.m0_act(o0)\n"
+    s += "\t\to1 = self.m1(o0)\n"
+    s += "\t\to1 = self.m1_act(o1)\n"
+    s += "\t\tret = o1\n"
+    s += "\t\treturn ret\n"
     '''
-    return # 일단은 아무 필요 없어는 보여서 이렇게 주기는 했는데, 서버측에서 성공적으로 실행되었는지를 알아보려면 Response 값 등을 리턴하는 것도 좋아는 보임.
+    return s # 일단은 아무 필요 없어는 보여서 이렇게 주기는 했는데, 서버측에서 성공적으로 실행되었는지를 알아보려면 Response 값 등을 리턴하는 것도 좋아는 보임.
 
 
 # Test : Simple MLP consisted of 2 layers,  Linear(5,3) -> ReLU -> Linear(3,1) -> Sigmoid
@@ -148,4 +152,5 @@ if __name__ == '__main__':
     mock_nodes = [Node('linear',5,4,'relu'), Node('linear',4,3,'softmax'), Node('linear',3,1,'sigmoid')]
     path = "./"
     input = [Input('x',0)]
-    WritePyTorch(mock_structure, mock_nodes, path, input)
+    print(WritePyTorch(mock_structure, mock_nodes, path, input))
+    
