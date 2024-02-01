@@ -63,7 +63,7 @@ def specify_act(name : str) -> str:
     if(name == 'softmax'): return "nn.Softmax()"
 
 
-def WritePyTorch(structure:[[]], nodes : [Node],  path : str, inputs : [Input]):
+def WritePyTorch(structure:[[]], nodes : [Node],  path : str, inputs : [Input]) -> str:
     '''
         Function for writing PyTorch model class code with given nodes, input variables, and connectivities between them.
 
