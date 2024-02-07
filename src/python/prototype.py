@@ -1,3 +1,7 @@
+import micropip
+await micropip.install('graph2code') 
+
+import graph2code.test
 import sys
 print = sys.stdout.write
 class Node:
@@ -148,6 +152,8 @@ if __name__ == '__main__':
 
 # Test : Simple MLP consisted of 3 layers, Linear(5,4) -> ReLU -> Linear(4,3) -> Softmax -> Linear(3,1) -> Sigmoid
 if __name__ == '__main__':
+    print(graph2code.test.get_hello()+"\n") # hello
+    #print(str(graph2code.randint(1,2))+"\n") # 1
     mock_structure = [[0,1,0],[0,0,1],[0,0,0]]
     mock_nodes = [Node('linear',5,4,'relu'), Node('linear',4,3,'softmax'), Node('linear',3,1,'sigmoid')]
     path = "./"
