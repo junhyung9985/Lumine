@@ -35,7 +35,7 @@ const PortWrapper = styled.div`
   display: flex;
   gap: 5px;
   flex-direction: column;
-  align-items:center;
+  align-self:center;
   padding: 10px 0;
 `;
 
@@ -50,6 +50,8 @@ const Port = styled.div`
 const Body = styled.div<{ activated: boolean; activation: ActivationType }>`
   display: flex;
   align-self:stretch;
+  align-items:center;
+  justify-contents:center;
   background: ${(props) => ActivationBackground[props.activation]};
   color: ${(props) => ActivationColor[props.activation]};
   min-width: 70px;
