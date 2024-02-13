@@ -1,12 +1,13 @@
-import styles from "./Button.module.css";
+import styled from "@emotion/styled";
 
-export default function Button(params:ButtonParams) {
-  return <div className={`${params.className} ${styles.btn}`}>
-    {params.children}
-  </div>
-}
+const Button = styled.div`
+  cursor:pointer;
+  border-radius:5px;
+  padding:10px 10px;
+  background-color:#3B4E47;
+  &:hover {
+    background-color:#161b19;
+  }
+` 
 
-interface ButtonParams {
-  className?:string,
-  children:React.ReactNode
-}
+export default Button;
