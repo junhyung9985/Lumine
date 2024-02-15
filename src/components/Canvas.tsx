@@ -1,44 +1,80 @@
-import styles from "./Canvas.module.css";
-
-import createEngine, {
-  DefaultLinkModel,
-  DefaultNodeModel,
-  DiagramModel,
-} from "@projectstorm/react-diagrams";
-
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
+// import CustomNodeExample from "../node-example";
+import styled from "@emotion/styled";
+import { GraphCodeCanvas } from "../model";
+import { LayerNodeFactory } from "../node/LayerNodeFactory";
+import { CustomPortFactory } from "../port/CustomPortFactory";
+import { ActivationType, LayerNodeModel, LayerType } from "../node/LayerNodeModel";
+import { VariableNodeFactory } from "../node/VariableNodeFactory";
+import { VariableNodeModel } from "../node/VariableNodeModel";
 
-import CustomNodeExample from "../node-example";
+const CanvasWrap = styled(CanvasWidget)`
+  height: 100%;
+  width: 100%;
+  background-size: 50px 50px;
+  background-image: linear-gradient(
+      0deg,
+      transparent 24%,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.05) 26%,
+      transparent 27%,
+      transparent 74%,
+      rgba(255, 255, 255, 0.05) 75%,
+      rgba(255, 255, 255, 0.05) 76%,
+      transparent 77%,
+      transparent
+    ),
+    linear-gradient(
+      90deg,
+      transparent 24%,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.05) 26%,
+      transparent 27%,
+      transparent 74%,
+      rgba(255, 255, 255, 0.05) 75%,
+      rgba(255, 255, 255, 0.05) 76%,
+      transparent 77%,
+      transparent
+    );
+`;
 
 export default function Canvas() {
-  const engine = createEngine();
-  // node 1
-  const node1 = new DefaultNodeModel({
-    name: "Node 1",
-    color: "rgb(0,192,255)",
-    extras:{
-      "activateFunction":"ReLU"
-    }
-  });
-  node1.setPosition(100, 100);
-  let port1 = node1.addOutPort("Out");
-  // node 2
-  const node2 = new DefaultNodeModel({
-    name: "Node 2",
-    color: "rgb(0,192,255)",
-  });
-  node2.setPosition(100, 100);
-  let port2 = node2.addOutPort("Out");
-  // link them and add a label to the link
-  const link = port1.link<DefaultLinkModel>(port2);
-  link.addLabel("Hello World!");
-  const model = new DiagramModel();
-  model.addAll(node1, node2, link);
+  // the canvas would NOT defined here, 
+  // as the model are changed and should be affected by the react state.
+  const ctx = new GraphCodeCanvas();
 
-  console.log(model.getNodes());
-  console.log("Links");
-  console.log(model.getLinks());
-  engine.setModel(model);
-  // return <CanvasWidget className={styles.canvas} engine={engine} />;
-  return <CustomNodeExample className={styles.canvas}/>
+  // furthermore all of this registration of factories should be defined in global context
+  // because the model is defined in global context as I mentioned before.
+  ctx.assignFactory(
+    new LayerNodeFactory(),
+    new CustomPortFactory()
+  );
+
+  ctx.assignFactory(
+    new VariableNodeFactory(),
+    new CustomPortFactory()
+  );
+  const a = new LayerNodeModel({
+    "activation":ActivationType.RELU,
+    "inputNum":3,
+    "outputNum":3,
+    "name":"ANG",
+    "type":LayerType.LINEAR
+  });
+  
+  a.setSelected(true);
+  console.log(a);
+  ctx.getModel().addAll(a, new LayerNodeModel({
+    "activation":ActivationType.SIGMOID,
+    "inputNum":3,
+    "outputNum":3,
+    "name":"ANG",
+    "type":LayerType.LINEAR
+  }),
+    new VariableNodeModel("ang", true)
+  );
+  // deserialize 할 때 eventlistner 가 증발해버린다.
+  ctx.deserialize(JSON.stringify(ctx.serialize()));
+  console.log(ctx.getEngine().getModel().getSelectedEntities());
+  return <CanvasWrap engine={ctx.getEngine()} />;
 }
