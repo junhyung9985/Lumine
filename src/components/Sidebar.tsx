@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
 import CollapseSVG from "/collapse.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "./Button";
+import { GraphCodeCanvas } from "../model";
+import { NodeModel } from "@projectstorm/react-diagrams";
 
 namespace S {
   export const wrap = styled.div<{toggle:boolean}>`
@@ -14,7 +16,7 @@ namespace S {
       padding-left:20px;
       padding-top:20px;
     }
-    & title {
+    title {
       display:block;
       font-size:20px;
     }
@@ -46,10 +48,28 @@ namespace S {
 }
 
 export default function Sidebar() {
+  const cvs = new GraphCodeCanvas();
+
   const [collapse, setCollapse] = useState<boolean>(false);
+  
   function toggleCollapse() {
     setCollapse(!collapse);
   }
+  
+  const [selectedNode, setSelectedNode] = useState<NodeModel | null>(null);
+  
+  useEffect(() => {
+    cvs.getModel().getModels().forEach((value) => {
+      value.registerListener({
+        selectionChanged() {
+          console.log("test");
+          setSelectedNode(value as NodeModel);
+        }
+      })
+    })
+    // 나중에 캔버스가 바뀌는지도 리코일을 이용해서 체킹한다음에, 해당 캔버스가 바뀔때마다 이 구문을 호출하도록 하자.
+  }, []);
+
   return <>
     <S.button toggle={collapse}>
       Generate Code!
@@ -62,7 +82,7 @@ export default function Sidebar() {
         <title>
           Attributes
         </title>
-        {/* Attribute 설정 구현 */}
+        {selectedNode?.getType()}
       </div>
       <div>
         <title>

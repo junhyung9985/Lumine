@@ -7,7 +7,7 @@ import createEngine, {
   AbstractModelFactory
 } from "@projectstorm/react-diagrams";
 import { AbstractReactFactory } from "@projectstorm/react-canvas-core";
-import { useState } from "react";
+import { Dispatch, useState } from "react";
 
 class GraphCodeModel {
   /**
@@ -44,7 +44,9 @@ export function useSelectedNode() {
 
 export class GraphCodeCanvas {
   private static engine: DiagramEngine | null = null;
-  constructor() {}
+  constructor() {
+    this.getEngine();
+  }
 
   getEngine() {
     if (!GraphCodeCanvas.engine) GraphCodeCanvas.engine = createEngine();
@@ -82,12 +84,6 @@ export class GraphCodeCanvas {
 
   deserialize(jsonData:string) {
     this.getEngine().getModel().deserializeModel(JSON.parse(jsonData), this.getEngine());
-    this.getModel().getModels().forEach((value) => {
-      value.registerListener({
-        selectionChanged() {
-          console.log("test");
-        }
-      })
-    })
+    
   }
 }
