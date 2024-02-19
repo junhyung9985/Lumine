@@ -21,8 +21,7 @@ export class CustomPortModel extends PortModel {
 
 		// 한 포트에 두개 이상의 연결점이 들어가는 경우
 		if(Object.keys(this.getLinks()).length > 1 || Object.keys(port.getLinks()).length > 0) {
-			console.log(this.getLinks());
-			console.log(port.getLinks());
+			
 			return false;
 		}
 		else return true;
