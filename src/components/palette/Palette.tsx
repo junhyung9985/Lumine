@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import Variable from "./type/Variable";
 import Layer from "./type/Layer";
-import { GraphCodeCanvas } from "../../model";
+import { useCanvasStore } from "../../store/CanvasStore";
 
 const Wrap = styled.div`
   padding: 0px 40px;
@@ -14,11 +14,15 @@ const Wrap = styled.div`
 `;
 
 export default function Palette() {
-  const cvs = new GraphCodeCanvas();
+  const addNode = useCanvasStore((state) => (state.addNode));
+  const ctx = useCanvasStore((state) => (state.engine));
+  ctx
+  console.log("Palette Rendered");
   return (
     <Wrap>
-      <Layer canvas={cvs}/>
-      <Variable canvas={cvs}/>
+      {typeof ctx}
+      <Layer onClick={addNode} />
+      <Variable onClick={addNode}/>
     </Wrap>
   );
 }

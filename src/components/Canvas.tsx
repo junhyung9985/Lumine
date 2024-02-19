@@ -1,12 +1,12 @@
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 // import CustomNodeExample from "../node-example";
 import styled from "@emotion/styled";
-import { GraphCodeCanvas } from "../model";
 import { LayerNodeFactory } from "../node/LayerNodeFactory";
 import { CustomPortFactory } from "../port/CustomPortFactory";
 import { ActivationType, LayerNodeModel, LayerType } from "../node/LayerNodeModel";
 import { VariableNodeFactory } from "../node/VariableNodeFactory";
 import { VariableNodeModel } from "../node/VariableNodeModel";
+import { useCanvasStore } from "../store/CanvasStore";
 
 const CanvasWrap = styled(CanvasWidget)`
   height: 100%;
@@ -41,19 +41,21 @@ const CanvasWrap = styled(CanvasWidget)`
 export default function Canvas() {
   // the canvas would NOT defined here, 
   // as the model are changed and should be affected by the react state.
-  const ctx = new GraphCodeCanvas();
-
+  const engine = useCanvasStore((state) => (state.engine));
+  const addNode = useCanvasStore((state) => (state.addNode));
+  const deserialize = useCanvasStore((state) => (state.deserialize));
   // furthermore all of this registration of factories should be defined in global context
   // because the model is defined in global context as I mentioned before.
-  ctx.assignFactory(
+  engine.assignFactory(
     new LayerNodeFactory(),
     new CustomPortFactory()
   );
-
-  ctx.assignFactory(
+    
+  engine.assignFactory(
     new VariableNodeFactory(),
     new CustomPortFactory()
   );
+
   const a = new LayerNodeModel({
     "activation":ActivationType.RELU,
     "inputNum":3,
@@ -62,19 +64,11 @@ export default function Canvas() {
     "type":LayerType.LINEAR
   });
   
-  a.setSelected(true);
-  console.log(a);
-  ctx.getModel().addAll(a, new LayerNodeModel({
-    "activation":ActivationType.SIGMOID,
-    "inputNum":3,
-    "outputNum":3,
-    "name":"ANG",
-    "type":LayerType.LINEAR
-  }),
-    new VariableNodeModel("ang", true)
-  );
+
+  addNode(a);
+
   // deserialize 할 때 eventlistner 가 증발해버린다.
-  ctx.deserialize(JSON.stringify(ctx.serialize()));
-  console.log(ctx.getEngine().getModel().getSelectedEntities());
-  return <CanvasWrap engine={ctx.getEngine()} />;
+  // deserialize(JSON.stringify(ctx.serialize()));
+
+  return <CanvasWrap engine={engine.getEngine()} />;
 }

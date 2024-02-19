@@ -1,9 +1,11 @@
 import styled from "@emotion/styled";
 import CollapseSVG from "/collapse.svg";
-import { useEffect, useState } from "react";
+import { ChangeEventHandler, useEffect, useState } from "react";
 import Button from "./Button";
-import { GraphCodeCanvas } from "../model";
 import { NodeModel } from "@projectstorm/react-diagrams";
+import { useCanvasStore } from "../store/CanvasStore";
+import { ActivationType, LayerNodeModel, LayerType } from "../node/LayerNodeModel";
+import { VariableNodeModel } from "../node/VariableNodeModel";
 
 namespace S {
   export const wrap = styled.div<{toggle:boolean}>`
@@ -48,30 +50,24 @@ namespace S {
 }
 
 export default function Sidebar() {
-  const cvs = new GraphCodeCanvas();
-
+  const ctx = useCanvasStore((state) => (state.engine)).getEngine();
+  const selectedNode = useCanvasStore((state) => (state.selectedNode));
+  const model = useCanvasStore((state) => (state.engine)).getModel();
   const [collapse, setCollapse] = useState<boolean>(false);
   
   function toggleCollapse() {
     setCollapse(!collapse);
   }
-  
-  const [selectedNode, setSelectedNode] = useState<NodeModel | null>(null);
-  
-  useEffect(() => {
-    cvs.getModel().getModels().forEach((value) => {
-      value.registerListener({
-        selectionChanged() {
-          console.log("test");
-          setSelectedNode(value as NodeModel);
-        }
-      })
-    })
-    // 나중에 캔버스가 바뀌는지도 리코일을 이용해서 체킹한다음에, 해당 캔버스가 바뀔때마다 이 구문을 호출하도록 하자.
-  }, []);
+
+  const handleNameChange:ChangeEventHandler<HTMLInputElement> = (e) => {
+    if(!selectedNode) return;
+    console.log(e.target.value);
+    (selectedNode as VariableNodeModel).name = "_" + "aa";
+    ctx.repaintCanvas();
+  }
 
   return <>
-    <S.button toggle={collapse}>
+    <S.button toggle={collapse} onClick={() => (console.log(model.serialize()))}>
       Generate Code!
     </S.button>
     <S.wrap toggle={collapse}>
@@ -80,15 +76,32 @@ export default function Sidebar() {
       </div>
       <div>
         <title>
-          Attributes
+          {selectedNode ? selectedNode.getType() : "none"}
         </title>
-        {selectedNode?.getType()}
+        <div>
+          setName :
+          <input type="text" name="setName" id="setname" onChange={handleNameChange} />
+        </div>
       </div>
       <div>
         <title>
           Project Settings
         </title>
-        {/* Project 설정 구현 */}
+        {!selectedNode ? "" :
+          (selectedNode as LayerNodeModel).layerType
+        }
+        <div onClick={() => {(selectedNode as LayerNodeModel).activation = ActivationType.SOFTMAX; ctx.repaintCanvas();}}>
+          Change to SOFTMAX!
+        </div>
+        <div onClick={() => {(selectedNode as LayerNodeModel).activation = ActivationType.SIGMOID; ctx.repaintCanvas();}}>
+          Change to SIGMOID!
+        </div>
+        <div onClick={() => {(selectedNode as LayerNodeModel).activation = ActivationType.RELU; ctx.repaintCanvas();}}>
+          Change to RELU!
+        </div>
+        <div onClick={() => {(selectedNode as VariableNodeModel).isInput = !(selectedNode as VariableNodeModel).isInput; ctx.repaintCanvas();}}>
+          switch INPUT / OUTPUT!
+        </div>
       </div>
     </S.wrap>
   </>

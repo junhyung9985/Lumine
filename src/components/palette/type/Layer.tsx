@@ -1,4 +1,5 @@
-import { GraphCodeCanvas } from "../../../model";
+import { ActivationType, LayerNodeModel, LayerType } from "../../../node/LayerNodeModel";
+import { useCanvasStore } from "../../../store/CanvasStore";
 import { ItemWrap } from "../ItemWrap";
 
 const NodeSVG = (
@@ -13,12 +14,23 @@ const NodeSVG = (
   </svg>
 );
 
+
 interface LayerProp {
-  canvas:GraphCodeCanvas
+  onClick:Function;
 }
 
 export default function Layer(prop:LayerProp) {
-  return <ItemWrap>
+  const engine = useCanvasStore((state) => (state.engine));
+  return <ItemWrap onClick={() => {
+    prop.onClick(new LayerNodeModel({
+      "activation":ActivationType.SIGMOID,
+      "inputNum":3,
+      "outputNum":3,
+      "type":LayerType.LINEAR,
+      "name":"Layer"
+    }));
+    engine.getEngine().repaintCanvas();
+  }}>
     {NodeSVG}
   </ItemWrap>
 }

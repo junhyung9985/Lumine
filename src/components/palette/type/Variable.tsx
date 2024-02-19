@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { ItemWrap } from "../ItemWrap";
-import { GraphCodeCanvas } from "../../../model";
 import { VariableNodeModel } from "../../../node/VariableNodeModel";
+import { useCanvasStore } from "../../../store/CanvasStore";
 
 const VariableItemWrap = styled(ItemWrap)`
   font-size: 30px;
@@ -10,12 +10,15 @@ const VariableItemWrap = styled(ItemWrap)`
 `;
 
 interface VariableProp {
-  canvas:GraphCodeCanvas;
+  onClick:Function;
 }
 
 export default function Variable(prop:VariableProp) {
-  const clickEventHandler = () => {
-    prop.canvas.getModel().addNode(new VariableNodeModel("variable", true));
-  };
-  return <VariableItemWrap onClick={clickEventHandler}>𝑥</VariableItemWrap>;
+  const engine = useCanvasStore((state) => (state.engine));
+  return <VariableItemWrap onClick={() => {
+    prop.onClick(new VariableNodeModel("Variable", true));
+    engine.getEngine().repaintCanvas();
+  }}>
+    𝑥
+  </VariableItemWrap>;
 }

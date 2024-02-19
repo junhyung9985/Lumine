@@ -24,10 +24,11 @@ export class VariableNodeModel extends NodeModel {
     else this.isInput = true;
 
     if(!rerender) {
-      let port = new CustomPortModel(isInput ? VariablePortType.INPUT : VariablePortType.OUTPUT);
-      port.setMaximumLinks(1);
-      this.addPort(port);
-      this.addPort(port);
+      let inPort = new CustomPortModel(VariablePortType.INPUT);
+      let outPort = new CustomPortModel(VariablePortType.OUTPUT);
+
+      this.addPort(inPort);
+      this.addPort(outPort);
     }
     
 	}
