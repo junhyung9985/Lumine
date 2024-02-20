@@ -1,9 +1,9 @@
-import micropip
-await micropip.install('graph2code') 
-
-import graph2code.test
+# import micropip
+# await micropip.install('graph2code') 
+# import graph2code.test
 import sys
-print = sys.stdout.write
+#print = sys.stdout.write
+
 class Node:
     def __init__(self, name : str, input : int, output : int, activation : str | None = None , **kwargs):
         '''
@@ -129,14 +129,6 @@ def WritePyTorch(structure:[[]], nodes : [Node],  path : str, inputs : [Input]) 
 
     s += "\t\treturn o{}".format(ret)
 
-    '''
-    s += "\t\to0 = self.m0(x)\n"
-    s += "\t\to0 = self.m0_act(o0)\n"
-    s += "\t\to1 = self.m1(o0)\n"
-    s += "\t\to1 = self.m1_act(o1)\n"
-    s += "\t\tret = o1\n"
-    s += "\t\treturn ret\n"
-    '''
     return s # 일단은 아무 필요 없어는 보여서 이렇게 주기는 했는데, 서버측에서 성공적으로 실행되었는지를 알아보려면 Response 값 등을 리턴하는 것도 좋아는 보임.
 
 
@@ -152,7 +144,13 @@ if __name__ == '__main__':
 
 # Test : Simple MLP consisted of 3 layers, Linear(5,4) -> ReLU -> Linear(4,3) -> Softmax -> Linear(3,1) -> Sigmoid
 if __name__ == '__main__':
-    print(graph2code.test.get_hello()+"\n") # hello
+    print(len(sys.argv))
+    #print(sys.argv[0])
+    if(len(sys.argv) > 1):
+        json = sys.argv[1]
+        print(json)
+
+    #rint(graph2code.test.get_hello()+"\n") # hello
     #print(str(graph2code.randint(1,2))+"\n") # 1
     mock_structure = [[0,1,0],[0,0,1],[0,0,0]]
     mock_nodes = [Node('linear',5,4,'relu'), Node('linear',4,3,'softmax'), Node('linear',3,1,'sigmoid')]

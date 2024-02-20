@@ -5,14 +5,10 @@ async function main() {
   const pyodide = await loadPyodide({
     indexURL:"https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"
   });
-  // let zipResponse = await fetch("./wheel.zip");
-  // let zipBinary = await zipResponse.arrayBuffer();
-  // pyodide.unpackArchive(zipBinary, "zip");
-  await pyodide.loadPackage("micropip");
-  const micropip = pyodide.pyimport("micropip");
-  // let zipResponse = await fetch("./graph2code-0.0.1-py3-none-any.whl")
-  // let zipBinary = await zipResponse.arrayBuffer();
-  // pyodide.unpackArchive();
+  // await pyodide.loadPackage("micropip");
+  // const micropip = pyodide.pyimport("micropip"); 
+  // 일단 모듈화 없이도 현재 진행해도 무방하여 제외시키긴 함. (graph2code에 들어가있는 내용물도 실질적으로 필요없는 기능들만 들어가 있어서...)
+  // Parsing 되는 것 확인 후에 모듈화 진행 후, 다시 이 부분을 손보는 걸로...
   pyodide.runPythonAsync(src);
   console.log("Loaded Pyodide");
 }
