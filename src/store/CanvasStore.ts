@@ -76,6 +76,7 @@ type CanvasStore = {
   engine: GraphCodeCanvas;
   selectedNode?: NodeModel;
   setModel: (model: DiagramModel) => void;
+  selectNode: (node:NodeModel) => void;
   addNode: (node: NodeModel) => void;
   deserialize: (dataStr: string) => void;
 };
@@ -87,7 +88,11 @@ export const useCanvasStore = create<CanvasStore>((set) => ({
       state.engine.setModel(model);  
       return {...state}
     }),
-    
+  
+  selectNode: (node) => {
+    set(() => ({selectedNode:node}))
+  },
+
   addNode: (node) => {
     node.registerListener({
       selectionChanged() {

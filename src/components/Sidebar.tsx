@@ -1,108 +1,150 @@
 import styled from "@emotion/styled";
 import CollapseSVG from "/collapse.svg";
-import { ChangeEventHandler, useEffect, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react";
 import Button from "./Button";
-import { NodeModel } from "@projectstorm/react-diagrams";
 import { useCanvasStore } from "../store/CanvasStore";
-import { ActivationType, LayerNodeModel, LayerType } from "../node/LayerNodeModel";
+import { LayerNodeModel } from "../node/LayerNodeModel";
 import { VariableNodeModel } from "../node/VariableNodeModel";
-
-namespace S {
-  export const wrap = styled.div<{toggle:boolean}>`
-    position:fixed;
-    right:${props => props.toggle ? "0px" : "-360px"};
-    background: #171919;
-    height:100%;
-    min-width:var(--sidebar-width);
-    & > * { 
-      padding-left:20px;
-      padding-top:20px;
-    }
-    title {
-      display:block;
-      font-size:20px;
-    }
-  `;
-
-  export const collapseBtn = styled.img<{toggle:boolean}>`
-    cursor:pointer;
-    width:16px;
-    transition:all ease-in-out 300ms;
-    position:relative;
-    right:0px;
-    ${props => (
-      props.toggle ? "" :
-      {
-        right:"120px",
-        transform:"rotate(180deg)"
-      }
-    )}
-    &:hover {
-      filter: brightness(2);
-    }
-  `;
-  
-  export const button = styled(Button)<{toggle:boolean}>`
-    position:absolute;
-    right:${props => (props.toggle ? "310px" : "10px")};
-    bottom:10px;
-  `
-}
+import LayerNodeSidebar from "./sidebar/LayerNodeSidebar";
+import VariableNodeSidebar from "./sidebar/VariableNodeSidebar";
 
 export default function Sidebar() {
   const ctx = useCanvasStore((state) => (state.engine)).getEngine();
-  const selectedNode = useCanvasStore((state) => (state.selectedNode));
+  const node = useCanvasStore((state) => (state.selectedNode));
   const model = useCanvasStore((state) => (state.engine)).getModel();
   const [collapse, setCollapse] = useState<boolean>(false);
+
+  const [name, setName] = useState<string>("");
   
+
   function toggleCollapse() {
     setCollapse(!collapse);
   }
 
   const handleNameChange:ChangeEventHandler<HTMLInputElement> = (e) => {
-    if(!selectedNode) return;
-    console.log(e.target.value);
-    (selectedNode as VariableNodeModel).name = "_" + "aa";
-    ctx.repaintCanvas();
+    if(!node) return;
+    (node as VariableNodeModel).name = e.target.value;
+    setName(e.target.value);
   }
 
+  
+
+  useEffect(() => {
+    ctx.repaintCanvas();
+  }, [name]);
+
+  useEffect(() => {
+    if(node) {
+      setName((node as LayerNodeModel).name);
+      node.setLocked(false);
+    }
+  }, [node]);
+
   return <>
-    <S.button toggle={collapse} onClick={() => (console.log(model.serialize()))}>
+    <GenerateCodeButton toggle={collapse} onClick={() => (console.log(model.serialize()))}>
       Generate Code!
-    </S.button>
-    <S.wrap toggle={collapse}>
+    </GenerateCodeButton>
+
+    <Wrap toggle={collapse}>
       <div>
-        <S.collapseBtn onClick={toggleCollapse} toggle={collapse} src={CollapseSVG} />
+        <CollapseButton onClick={toggleCollapse} toggle={collapse} src={CollapseSVG} />
       </div>
-      <div>
-        <title>
-          {selectedNode ? selectedNode.getType() : "none"}
-        </title>
-        <div>
-          setName :
-          <input type="text" name="setName" id="setname" onChange={handleNameChange} />
-        </div>
-      </div>
+      {
+        !node ? null : <>
+          <title>
+            Node Attributes
+          </title>
+          <NodeSettings>
+            {node.getType()}
+            {
+              !node ? "" : <div>
+              <title>
+                Name
+              </title>
+              <input type="text" name="setName" id="setname" value={name} onFocus={() => (node.setLocked(true))} onBlur={() => (node.setLocked(false))} onChange={handleNameChange} />
+            </div>
+            }
+            {
+              node?.getType() !== LayerNodeModel.type ? "" :
+              <LayerNodeSidebar node={node as LayerNodeModel}/>
+            }
+            {
+              node?.getType() !== VariableNodeModel.type ? "" :
+              <VariableNodeSidebar node={node as VariableNodeModel}/>
+            }
+          </NodeSettings>
+        </>
+      }
       <div>
         <title>
           Project Settings
         </title>
-        {!selectedNode ? "" :
-          (selectedNode as LayerNodeModel).layerType
-        }
-        <div onClick={() => {(selectedNode as LayerNodeModel).activation = ActivationType.SOFTMAX; ctx.repaintCanvas();}}>
-          Change to SOFTMAX!
-        </div>
-        <div onClick={() => {(selectedNode as LayerNodeModel).activation = ActivationType.SIGMOID; ctx.repaintCanvas();}}>
-          Change to SIGMOID!
-        </div>
-        <div onClick={() => {(selectedNode as LayerNodeModel).activation = ActivationType.RELU; ctx.repaintCanvas();}}>
-          Change to RELU!
-        </div>
-        <div onClick={() => {(selectedNode as VariableNodeModel).isInput = !(selectedNode as VariableNodeModel).isInput; ctx.repaintCanvas();}}>
-          switch INPUT / OUTPUT!
-        </div>
       </div>
-    </S.wrap>
+    </Wrap>
   </>
 }
+
+const Wrap = styled.div<{toggle:boolean}>`
+  position:fixed;
+  right:${props => props.toggle ? "0px" : "-360px"};
+  background: #171919;
+  height:100%;
+  min-width:var(--sidebar-width);
+  & > * { 
+    padding: 0 20px;
+    padding-top: 20px;
+  }
+  title {
+    display:block;
+    font-size:20px;
+  }
+  subtitle {
+    display:block;
+    font-size:18px;
+  }
+  input, select {
+    background:transparent;
+    border:none;
+    border-bottom:1px solid #505050;
+  }
+  input:focus-visible, select:focus-visible {
+    outline:none;
+    border:none;
+    border-bottom:1px solid #75dfb8;
+  }
+`;
+
+const CollapseButton = styled.img<{toggle:boolean}>`
+  cursor:pointer;
+  width:16px;
+  transition:all ease-in-out 300ms;
+  position:relative;
+  right:0px;
+  ${props => (
+    props.toggle ? "" :
+    {
+      right:"120px",
+      transform:"rotate(180deg)"
+    }
+  )}
+  &:hover {
+    filter: brightness(2);
+  }
+`;
+
+const GenerateCodeButton = styled(Button)<{toggle:boolean}>`
+  position:absolute;
+  right:${props => (props.toggle ? "310px" : "10px")};
+  bottom:10px;
+`
+
+const NodeSettings = styled.div`
+  & > * {
+    padding-top:5px;
+    padding-bottom:5px;
+  }
+  title {
+    font-size:18px !important;
+    margin-top: 10px;
+  }
+`

@@ -64,9 +64,10 @@ export default function Canvas() {
     "type":LayerType.LINEAR
   });
   
+  const b = new VariableNodeModel("test", 3);
 
   addNode(a);
-
+  addNode(b);
   // deserialize 할 때 eventlistner 가 증발해버린다.
   // deserialize(JSON.stringify(ctx.serialize()));
 
