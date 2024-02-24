@@ -2,6 +2,10 @@ import styled from "@emotion/styled";
 import CollapseSVG from "/collapse.svg";
 import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react";
 import Button from "./Button";
+
+import { NodeModel } from "@projectstorm/react-diagrams";
+import RunPython from "../python/run-python-test";
+
 import { useCanvasStore } from "../store/CanvasStore";
 import { LayerNodeModel } from "../node/LayerNodeModel";
 import { VariableNodeModel } from "../node/VariableNodeModel";
@@ -41,7 +45,8 @@ export default function Sidebar() {
   }, [node]);
 
   return <>
-    <GenerateCodeButton toggle={collapse} onClick={() => (console.log(model.serialize()))}>
+
+    <GenerateCodeButton toggle={collapse} onClick={() => (RunPython(model.serialize()))}>
       Generate Code!
     </GenerateCodeButton>
 

@@ -1,9 +1,11 @@
 # import micropip
 # await micropip.install('graph2code') 
 # import graph2code.test
-import sys
-#print = sys.stdout.write
 
+import sys
+import json
+
+####################################### CLASS DEFINITION ####################################################
 class Node:
     def __init__(self, name : str, input : int, output : int, activation : str | None = None , **kwargs):
         '''
@@ -24,8 +26,8 @@ class Node:
         self.activation = activation
         self.kwargs = kwargs # channel 등등의 정보
 
-class Input:
-    def __init__(self, name : str, connected_to : int):
+class Variable:
+    def __init__(self, name : str, connected_to : int, is_input : bool):
         '''
             !!! There will be significant changes on this class definition "Input" -> "Variable"
 
@@ -37,11 +39,42 @@ class Input:
         '''
         self.name = name
         self.connected_to = connected_to
+        self.is_input = is_input
+####################################### CLASS DEFINITION ####################################################
 
-def JsonParse(json):
-    # Function for parsing json file.
-    # Since we did not defined json specification, we cannot define this.
-    pass
+####################################### PARSING LOGIC #######################################################
+
+def JsonParse(json_str : str):
+    '''
+        Function to parse JSON string into dictionary + deserialize into structure, nodes, input and output variables.
+
+        Args :
+            json_str : JSON string containing all of information on the canvas.
+
+    '''
+    dic = json.loads(json_str)
+    print(dic['layers'][0])
+    print(dic['layers'][1]['models'])
+
+    node_idx = {}
+    nodes = []
+    cnt = 0
+    inputs = []
+    outputs = []
+    for node_id, infos in dic['layers'][1]['models']:
+        print(infos)
+        if(dic['layers'][1]['models'][node_id]['type'] == 'layer'):
+            infos = dic['layers'][1]['models'][node_id]
+            node_idx[node_id] = cnt
+            nodes.append(Node(infos['linear'],infos['inputNum'], infos['outputNum'], infos['activation']))
+            cnt += 1
+
+
+    
+
+    print(node_idx)
+
+    return dic
 
 def specify(node : Node) -> str:
     '''
@@ -66,8 +99,11 @@ def specify_act(name : str) -> str:
     if(name == 'relu'): return "nn.ReLU()"
     if(name == 'softmax'): return "nn.Softmax()"
 
+####################################### PARSING LOGIC #######################################################
 
-def WritePyTorch(structure:[[]], nodes : [Node],  path : str, inputs : [Input]) -> str:
+####################################### WRITING LOGIC #######################################################
+
+def WritePyTorch(structure:[[]], nodes : [Node],  path : str, inputs : [Variable], outputs : [Variable]) -> str:
     '''
         Function for writing PyTorch model class code with given nodes, input variables, and connectivities between them.
 
@@ -112,9 +148,6 @@ def WritePyTorch(structure:[[]], nodes : [Node],  path : str, inputs : [Input]) 
             s += "\t\to{} = self.{}_act(o{})\n".format(idx, nodes_name[idx], idx)
         start_nodes.append(idx)
 
-    # BFS since we do not think about residual connections.
-    # Since we do not consider residual connection right now, every nodes indegree will be 1.
-    # So just doing BFS would be fine. We will change the algorithm to Topological Sorting if needed.
     ret = 0
     while(len(start_nodes) != 0):
         idx = start_nodes[0]
@@ -131,30 +164,39 @@ def WritePyTorch(structure:[[]], nodes : [Node],  path : str, inputs : [Input]) 
 
     return s # 일단은 아무 필요 없어는 보여서 이렇게 주기는 했는데, 서버측에서 성공적으로 실행되었는지를 알아보려면 Response 값 등을 리턴하는 것도 좋아는 보임.
 
+    # BFS since we do not think about residual connections.
+    # Since we do not consider residual connection right now, every nodes indegree will be 1.
+    # So just doing BFS would be fine. We will change the algorithm to Topological Sorting if needed.
 
-# Test : Simple MLP consisted of 2 layers,  Linear(5,3) -> ReLU -> Linear(3,1) -> Sigmoid
-'''
-if __name__ == '__main__':
-    mock_structure = [[0,1],[0,0]]
-    mock_nodes = [Node('linear',5,3,'relu'), Node('linear',3,1,'sigmoid')]
-    path = "./"
-    input = [Input('x',0)]
-    WritePyTorch(mock_structure, mock_nodes, path, input)
-'''
+
+####################################### WRITING LOGIC #######################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Test : Simple MLP consisted of 3 layers, Linear(5,4) -> ReLU -> Linear(4,3) -> Softmax -> Linear(3,1) -> Sigmoid
 if __name__ == '__main__':
     print(len(sys.argv))
-    #print(sys.argv[0])
-    if(len(sys.argv) > 1):
-        json = sys.argv[1]
-        print(json)
 
-    #rint(graph2code.test.get_hello()+"\n") # hello
-    #print(str(graph2code.randint(1,2))+"\n") # 1
+    if(len(sys.argv) > 1):
+        dic = JsonParse(sys.argv[1])
+        print(type(dic))
+
     mock_structure = [[0,1,0],[0,0,1],[0,0,0]]
     mock_nodes = [Node('linear',5,4,'relu'), Node('linear',4,3,'softmax'), Node('linear',3,1,'sigmoid')]
     path = "./"
-    input = [Input('x',0)]
-    print(WritePyTorch(mock_structure, mock_nodes, path, input))
+    input = [Variable('x',0,True)]
+    output = [Variable('y',2,True)]
+    print(WritePyTorch(mock_structure, mock_nodes, path, input,output))
     
