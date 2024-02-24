@@ -29,9 +29,9 @@ export class CustomPortModel extends PortModel {
 
 	createLinkModel(): LinkModel {
 		return new DefaultLinkModel({
-			color:"white",
-			curvyness:0,
-			width:5,
+			color:"#48d19f",
+			curvyness:10,
+			width:3,
 		});
 	}
 }
