@@ -15,12 +15,9 @@ const Wrap = styled.div`
 
 export default function Palette() {
   const addNode = useCanvasStore((state) => (state.addNode));
-  const ctx = useCanvasStore((state) => (state.engine));
-  ctx
-  console.log("Palette Rendered");
+  
   return (
     <Wrap>
-      {typeof ctx}
       <Layer onClick={addNode} />
       <Variable onClick={addNode}/>
     </Wrap>
