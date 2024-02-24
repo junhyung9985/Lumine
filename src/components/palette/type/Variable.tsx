@@ -16,7 +16,7 @@ interface VariableProp {
 export default function Variable(prop:VariableProp) {
   const engine = useCanvasStore((state) => (state.engine));
   return <VariableItemWrap onClick={() => {
-    prop.onClick(new VariableNodeModel("Variable", true));
+    prop.onClick(new VariableNodeModel("Variable", 1));
     engine.getEngine().repaintCanvas();
   }}>
     𝑥

@@ -1,9 +1,5 @@
 import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams";
-import {
-  LayerNodeModel,
-  LayerPortType,
-  ActivationType,
-} from "./LayerNodeModel";
+import { LayerNodeModel, ActivationType } from "./LayerNodeModel";
 import styled from "@emotion/styled";
 
 export interface LayerNodeWidgetProps {
@@ -27,66 +23,79 @@ const ActivationBackground: Record<ActivationType, string> = {
 
 const Wrap = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  
+  min-width:140px;
   align-items: stretch;
 `;
 
-const PortWrapper = styled.div`
-  display: flex;
-  gap: 5px;
-  flex-direction: column;
-  align-self:center;
-  padding: 10px 0;
-`;
-
-const Port = styled.div`
-  background: rgb(0, 0, 0, 0.5);
-  border-radius: 50%;
+const Port = styled.div<{ isInput: boolean }>`
+  border-radius: ${(prop) => (prop.isInput ? "0 50% 50% 0" : "50% 0 0 50%")};
+  background: ${(prop) => (prop.isInput ? "#c7c7c7" : "#7d7d7d")};
   width: 15px;
   height: 15px;
-  align-self:center;
+  align-self: center;
 `;
 
 const Body = styled.div<{ activated: boolean; activation: ActivationType }>`
   display: flex;
-  align-self:stretch;
-  align-items:center;
-  justify-contents:center;
+  align-self: stretch;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
   background: ${(props) => ActivationBackground[props.activation]};
   color: ${(props) => ActivationColor[props.activation]};
-  min-width: 70px;
-  max-width: 100px;
+  
   border: 2px solid ${(props) => (props.activated ? "white" : "black")};
-  border-radius: 10px;
-  padding: 5px;
+  border-radius: 5px;
+
+  & > .title {
+    background-color: rgb(0 0 0 / 30%);
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  & > .name {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:50px;
+    padding: 10px;
+  }
 `;
 
 export function LayerNodeWidget(props: LayerNodeWidgetProps) {
-  const inputPorts = props.node.getPortArray(LayerPortType.INPUT);
-  const outputPorts = props.node.getPortArray(LayerPortType.OUTPUT);
+  const inputPort = props.node.getInputPort();
+  const outputPort = props.node.getOutputPort();
 
   return (
     <Wrap>
-      <PortWrapper>
-        {inputPorts.map((value, idx) => (
-          <PortWidget key={idx} port={value} engine={new DiagramEngine()}>
-            <Port />
-          </PortWidget>
-        ))}
-      </PortWrapper>
       <Body
         activated={props.node.isSelected()}
         activation={props.node.activation}
       >
-        {props.node.name}
-      </Body>
-      <PortWrapper>
-        {outputPorts.map((value, idx) => (
-          <PortWidget key={idx} port={value} engine={new DiagramEngine()}>
-            <Port />
+        <div className="title">
+          <PortWidget port={inputPort} engine={new DiagramEngine()}>
+            <Port isInput={true} />
           </PortWidget>
-        ))}
-      </PortWrapper>
+          <div>
+            {props.node.inputNum}
+          </div>
+          
+          {props.node.activation}
+          <div>
+            {props.node.outputNum}
+          </div>
+          
+          <PortWidget port={outputPort} engine={new DiagramEngine()}>
+            <Port isInput={false} />
+          </PortWidget>
+        </div>
+        <div className="name">{props.node.name}</div>
+      </Body>
     </Wrap>
   );
 }

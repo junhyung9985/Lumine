@@ -28,28 +28,30 @@ export interface LayerNodeModelProp {
 
 export class LayerNodeModel extends NodeModel {
   name: string;
+  static type = "layer";
   layerType: LayerType;
   inputNum: number;
   outputNum: number;
   activation:ActivationType;
 
-  getPortArray(type:LayerPortType):PortModel[] {
-    const arr:PortModel[] = [];
-    let length;
-    
-    if(type == LayerPortType.INPUT) length = this.inputNum;
-    else if(type == LayerPortType.OUTPUT) length = this.outputNum;
-    else length = 1;
-
-    for(let i=0; i < length; ++i) {
-      let port = this.getPort(`${i}_${type}`);
-      if(port == undefined) {
-        return [];
-      }
-      arr.push(port);
+  getInputPort():PortModel {
+    const port = this.getPort(LayerPortType.INPUT);
+    if(!port) {
+      throw new Error("LayerNodeModel : No Input Port.");
     }
+    else {
+      return port;
+    }
+  }
 
-    return arr;
+  getOutputPort():PortModel {
+    const port = this.getPort(LayerPortType.OUTPUT);
+    if(!port) {
+      throw new Error("LayerNodeModel : No Output Port.");
+    }
+    else {
+      return port;
+    }
   }
 
   parseIndex(id:string) {
@@ -58,7 +60,7 @@ export class LayerNodeModel extends NodeModel {
 
 	constructor(param?:LayerNodeModelProp) {
 		super({
-			type: `layer`,
+			type: LayerNodeModel.type,
 		});
 
     if(param == undefined) {
@@ -69,7 +71,6 @@ export class LayerNodeModel extends NodeModel {
       this.activation = ActivationType.UNDEFINED;
       return;
     }
-
     if(param.inputNum < 0 || param.outputNum < 0) {
       throw Error("inputNum or outputNum should be over 0.");
     } 
@@ -79,18 +80,8 @@ export class LayerNodeModel extends NodeModel {
     this.inputNum = param.inputNum;
     this.outputNum = param.outputNum;
     this.activation = param.activation;
-
-    for(let i=0; i<param.inputNum; ++i) {
-      let port = new CustomPortModel(`${i}_${LayerPortType.INPUT}`);
-      port.setMaximumLinks(1);
-      this.addPort(port);
-    }
-    
-    for(let i=0; i<param.outputNum; ++i) {
-      let port = new CustomPortModel(`${i}_${LayerPortType.OUTPUT}`);
-      port.setMaximumLinks(1);
-      this.addPort(port);
-    }
+    this.addPort(new CustomPortModel(LayerPortType.INPUT));
+    this.addPort(new CustomPortModel(LayerPortType.OUTPUT));
 
 	}
 
