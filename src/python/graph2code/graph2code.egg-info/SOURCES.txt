@@ -1,8 +1,0 @@
-README.md
-setup.py
-graph2code/__init__.py
-graph2code/test.py
-graph2code.egg-info/PKG-INFO
-graph2code.egg-info/SOURCES.txt
-graph2code.egg-info/dependency_links.txt
-graph2code.egg-info/top_level.txt

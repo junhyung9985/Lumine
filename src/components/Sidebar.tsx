@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import CollapseSVG from "/collapse.svg";
 import { useState } from "react";
-import RunPython from "../python/run-python-test";
+import RunPython from "../python/run-python";
 import { useCanvasStore } from "../store/CanvasStore";
 import useNodeNameState from "../hooks/useNodeNameState";
 import NodeSettings from "./Sidebar/NodeSettings";
