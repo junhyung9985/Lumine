@@ -8,6 +8,9 @@ import createEngine, {
   PortModel,
   DeleteItemsAction,
 } from "@projectstorm/react-diagrams";
+import { LayerNodeFactory } from "../node/LayerNodeFactory";
+import { CustomPortFactory } from "../port/CustomPortFactory";
+import { VariableNodeFactory } from "../node/VariableNodeFactory";
 
 class GraphCodeModel {
   /**
@@ -81,8 +84,24 @@ type CanvasStore = {
   deserialize: (dataStr: string) => void;
 };
 
+function initEngine() {
+  const engine = new GraphCodeCanvas();
+  
+  engine.assignFactory(
+    new LayerNodeFactory(),
+    new CustomPortFactory()
+  );
+    
+  engine.assignFactory(
+    new VariableNodeFactory(),
+    new CustomPortFactory()
+  );
+
+  return engine;
+}
+
 export const useCanvasStore = create<CanvasStore>((set) => ({
-  engine: new GraphCodeCanvas(),
+  engine: initEngine(),
   setModel: (model) =>
     set((state) => {
       state.engine.setModel(model);  

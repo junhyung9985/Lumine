@@ -1,6 +1,6 @@
-import { ActivationType, LayerNodeModel, LayerType } from "../../../node/LayerNodeModel";
-import { useCanvasStore } from "../../../store/CanvasStore";
-import { ItemWrap } from "../ItemWrap";
+import { ActivationType, LayerNodeModel, LayerType } from "../../node/LayerNodeModel";
+import { useCanvasStore } from "../../store/CanvasStore";
+import { ItemWrap } from "./ItemWrap";
 
 const NodeSVG = (
   <svg
@@ -14,15 +14,12 @@ const NodeSVG = (
   </svg>
 );
 
-
-interface LayerProp {
-  onClick:Function;
-}
-
-export default function Layer(prop:LayerProp) {
+export default function Layer() {
   const engine = useCanvasStore((state) => (state.engine));
-  return <ItemWrap onClick={() => {
-    prop.onClick(new LayerNodeModel({
+  const addNode = useCanvasStore((state) => state.addNode);
+
+  const handleClick = () => {
+    addNode(new LayerNodeModel({
       "activation":ActivationType.SIGMOID,
       "inputNum":3,
       "outputNum":3,
@@ -30,7 +27,9 @@ export default function Layer(prop:LayerProp) {
       "name":"Layer"
     }));
     engine.getEngine().repaintCanvas();
-  }}>
+  }
+
+  return <ItemWrap onClick={handleClick}>
     {NodeSVG}
   </ItemWrap>
 }

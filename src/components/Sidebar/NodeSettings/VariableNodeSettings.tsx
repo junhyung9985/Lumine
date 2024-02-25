@@ -1,7 +1,6 @@
 import { ChangeEventHandler, useEffect, useState } from "react";
-import { useCanvasStore } from "../../store/CanvasStore";
-import styled from "@emotion/styled";
-import { VariableNodeModel } from "../../node/VariableNodeModel";
+import { useCanvasStore } from "../../../store/CanvasStore";
+import { VariableNodeModel } from "../../../node/VariableNodeModel";
 
 interface VariableNodeSidebarProps {
   node: VariableNodeModel

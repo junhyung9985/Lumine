@@ -1,12 +1,6 @@
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
-// import CustomNodeExample from "../node-example";
-import styled from "@emotion/styled";
-import { LayerNodeFactory } from "../node/LayerNodeFactory";
-import { CustomPortFactory } from "../port/CustomPortFactory";
-import { ActivationType, LayerNodeModel, LayerType } from "../node/LayerNodeModel";
-import { VariableNodeFactory } from "../node/VariableNodeFactory";
-import { VariableNodeModel } from "../node/VariableNodeModel";
 import { useCanvasStore } from "../store/CanvasStore";
+import styled from "@emotion/styled";
 
 const CanvasWrap = styled(CanvasWidget)`
   height: 100%;
@@ -38,38 +32,36 @@ const CanvasWrap = styled(CanvasWidget)`
     );
 `;
 
+const Wrap = styled.div`
+  position:relative;
+  height:100%;
+  width:100%;
+  min-width:0;
+
+  & * {
+    transition:none;
+  }
+
+  & > div {
+    position:absolute;
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
+`
+
 export default function Canvas() {
   // the canvas would NOT defined here, 
   // as the model are changed and should be affected by the react state.
   const engine = useCanvasStore((state) => (state.engine));
-  const addNode = useCanvasStore((state) => (state.addNode));
-  const deserialize = useCanvasStore((state) => (state.deserialize));
   // furthermore all of this registration of factories should be defined in global context
   // because the model is defined in global context as I mentioned before.
-  engine.assignFactory(
-    new LayerNodeFactory(),
-    new CustomPortFactory()
-  );
-    
-  engine.assignFactory(
-    new VariableNodeFactory(),
-    new CustomPortFactory()
-  );
 
-  const a = new LayerNodeModel({
-    "activation":ActivationType.RELU,
-    "inputNum":3,
-    "outputNum":3,
-    "name":"ANG",
-    "type":LayerType.LINEAR
-  });
-  
-  const b = new VariableNodeModel("test", 3);
-
-  addNode(a);
-  addNode(b);
   // deserialize 할 때 eventlistner 가 증발해버린다.
   // deserialize(JSON.stringify(ctx.serialize()));
-
-  return <CanvasWrap engine={engine.getEngine()} />;
+  return <Wrap>
+    <div>
+      <CanvasWrap engine={engine.getEngine()} />
+    </div>
+  </Wrap>
 }

@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import Variable from "./type/Variable";
-import Layer from "./type/Layer";
-import { useCanvasStore } from "../../store/CanvasStore";
+import VariablePalette from "./Palette/VariablePalette";
+import LayerPalette from "./Palette/LayerPalette";
 
 const Wrap = styled.div`
   padding: 0px 40px;
@@ -14,12 +13,10 @@ const Wrap = styled.div`
 `;
 
 export default function Palette() {
-  const addNode = useCanvasStore((state) => (state.addNode));
-  
   return (
     <Wrap>
-      <Layer onClick={addNode} />
-      <Variable onClick={addNode}/>
+      <LayerPalette />
+      <VariablePalette />
     </Wrap>
   );
 }

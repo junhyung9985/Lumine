@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { ActivationType, LayerNodeModel } from "../../node/LayerNodeModel";
-import { useCanvasStore } from "../../store/CanvasStore";
+import { ActivationType, LayerNodeModel } from "../../../node/LayerNodeModel";
+import { useCanvasStore } from "../../../store/CanvasStore";
 import styled from "@emotion/styled";
 
 interface LayerNodeSidebarProps {
@@ -96,7 +96,7 @@ export default function LayerNodeSidebar(param: LayerNodeSidebarProps) {
           onChange={(e) => setType(e.target.value as ActivationType)}
           defaultValue={node.activation}
         >
-          {ActivationTypeView.map((value, idx) => {
+          {ActivationTypeView.map((value) => {
             return (
               <option
                 value={value.value}

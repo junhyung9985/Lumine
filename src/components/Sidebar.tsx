@@ -1,93 +1,11 @@
 import styled from "@emotion/styled";
 import CollapseSVG from "/collapse.svg";
-import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react";
-import Button from "./Button";
-
-import { NodeModel } from "@projectstorm/react-diagrams";
+import { useState } from "react";
 import RunPython from "../python/run-python-test";
-
 import { useCanvasStore } from "../store/CanvasStore";
-import { LayerNodeModel } from "../node/LayerNodeModel";
-import { VariableNodeModel } from "../node/VariableNodeModel";
-import LayerNodeSidebar from "./sidebar/LayerNodeSidebar";
-import VariableNodeSidebar from "./sidebar/VariableNodeSidebar";
-
-export default function Sidebar() {
-  const ctx = useCanvasStore((state) => (state.engine)).getEngine();
-  const node = useCanvasStore((state) => (state.selectedNode));
-  const model = useCanvasStore((state) => (state.engine)).getModel();
-  const [collapse, setCollapse] = useState<boolean>(false);
-
-  const [name, setName] = useState<string>("");
-  
-
-  function toggleCollapse() {
-    setCollapse(!collapse);
-  }
-
-  const handleNameChange:ChangeEventHandler<HTMLInputElement> = (e) => {
-    if(!node) return;
-    (node as VariableNodeModel).name = e.target.value;
-    setName(e.target.value);
-  }
-
-  
-
-  useEffect(() => {
-    ctx.repaintCanvas();
-  }, [name]);
-
-  useEffect(() => {
-    if(node) {
-      setName((node as LayerNodeModel).name);
-      node.setLocked(false);
-    }
-  }, [node]);
-
-  return <>
-
-    <GenerateCodeButton toggle={collapse} onClick={() => (RunPython(model.serialize()))}>
-      Generate Code!
-    </GenerateCodeButton>
-
-    <Wrap toggle={collapse}>
-      <div>
-        <CollapseButton onClick={toggleCollapse} toggle={collapse} src={CollapseSVG} />
-      </div>
-      {
-        !node ? null : <>
-          <title>
-            Node Attributes
-          </title>
-          <NodeSettings>
-            {node.getType()}
-            {
-              !node ? "" : <div>
-              <title>
-                Name
-              </title>
-              <input type="text" name="setName" id="setname" value={name} onFocus={() => (node.setLocked(true))} onBlur={() => (node.setLocked(false))} onChange={handleNameChange} />
-            </div>
-            }
-            {
-              node?.getType() !== LayerNodeModel.type ? "" :
-              <LayerNodeSidebar node={node as LayerNodeModel}/>
-            }
-            {
-              node?.getType() !== VariableNodeModel.type ? "" :
-              <VariableNodeSidebar node={node as VariableNodeModel}/>
-            }
-          </NodeSettings>
-        </>
-      }
-      <div>
-        <title>
-          Project Settings
-        </title>
-      </div>
-    </Wrap>
-  </>
-}
+import useNodeNameState from "../hooks/useNodeNameState";
+import NodeSettings from "./Sidebar/NodeSettings";
+import ProjectSettings from "./Sidebar/ProjectSettings";
 
 const Wrap = styled.div<{toggle:boolean}>`
   position:fixed;
@@ -137,19 +55,43 @@ const CollapseButton = styled.img<{toggle:boolean}>`
   }
 `;
 
-const GenerateCodeButton = styled(Button)<{toggle:boolean}>`
+const GenerateCodeButton = styled.div<{toggle:boolean}>`
+  cursor:pointer;
+  border-radius:5px;
+  padding:10px 10px;
+  background-color:#3B4E47;
   position:absolute;
   right:${props => (props.toggle ? "310px" : "10px")};
   bottom:10px;
-`
 
-const NodeSettings = styled.div`
-  & > * {
-    padding-top:5px;
-    padding-bottom:5px;
+  &:hover {
+    background-color:#161b19;
   }
-  title {
-    font-size:18px !important;
-    margin-top: 10px;
+`;
+
+export default function Sidebar() {
+  const node = useCanvasStore((state) => (state.selectedNode));
+  const model = useCanvasStore((state) => (state.engine)).getModel();
+  const [collapse, setCollapse] = useState<boolean>(false);
+
+  const {name, setName} = useNodeNameState();
+
+  const handleCollapseToggle = () => {
+    setCollapse(!collapse);
   }
-`
+
+  return <>
+    <GenerateCodeButton toggle={collapse} onClick={() => (RunPython(model.serialize()))}>
+      Generate Code!
+    </GenerateCodeButton>
+
+    <Wrap toggle={collapse}>
+      <div>
+        <CollapseButton onClick={handleCollapseToggle} toggle={collapse} src={CollapseSVG} />
+      </div>
+      <NodeSettings node={node} name={name} setName={setName} />
+      <ProjectSettings />
+    </Wrap>
+  </>
+}
+
