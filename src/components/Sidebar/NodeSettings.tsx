@@ -5,17 +5,7 @@ import { VariableNodeModel } from "../../node/VariableNodeModel";
 import { LayerNodeModel } from "../../node/LayerNodeModel";
 import LayerNodeSettings from "./NodeSettings/LayerNodeSettings";
 import VariableNodeSettings from "./NodeSettings/VariableNodeSettings";
-
-const Wrap = styled.div`
-  & > * {
-    padding-top:5px;
-    padding-bottom:5px;
-  }
-  title {
-    font-size:18px !important;
-    margin-top: 10px;
-  }
-`;
+import { Wrap } from "./Settings";
 
 interface NodeSettingsProps {
   node?: NodeModel;
