@@ -1,8 +1,8 @@
-import styles from './layout.module.css';
 import Canvas from './components/Canvas';
 import Sidebar from './components/Sidebar';
 import NavMenu from './components/NavMenu';
 import styled from '@emotion/styled';
+import Modal from './components/Modal';
 
 const Body = styled.div`
   display:flex;
@@ -13,6 +13,7 @@ const Body = styled.div`
 
 export default function App() {
   return <main>
+    <Modal />
     <NavMenu />
     <Body>
       <Canvas />

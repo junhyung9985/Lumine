@@ -6,6 +6,8 @@ import { useCanvasStore } from "../store/CanvasStore";
 import useNodeNameState from "../hooks/useNodeNameState";
 import NodeSettings from "./Sidebar/NodeSettings";
 import ProjectSettings from "./Sidebar/ProjectSettings";
+import { Button } from "./Button";
+import { useModalStore } from "../store/ModalStore";
 
 const Wrap = styled.div<{toggle:boolean}>`
   position:fixed;
@@ -14,6 +16,7 @@ const Wrap = styled.div<{toggle:boolean}>`
   height:100%;
   min-width:var(--sidebar-width);
   & > * { 
+    width:260px;
     padding: 0 20px;
     padding-top: 20px;
   }
@@ -55,23 +58,16 @@ const CollapseButton = styled.img<{toggle:boolean}>`
   }
 `;
 
-const GenerateCodeButton = styled.div<{toggle:boolean}>`
-  cursor:pointer;
-  border-radius:5px;
-  padding:10px 10px;
-  background-color:#3B4E47;
+const GenerateCodeButton = styled(Button)<{toggle:boolean}>`
   position:absolute;
   right:${props => (props.toggle ? "310px" : "10px")};
   bottom:10px;
-
-  &:hover {
-    background-color:#161b19;
-  }
 `;
 
 export default function Sidebar() {
   const node = useCanvasStore((state) => (state.selectedNode));
   const model = useCanvasStore((state) => (state.engine)).getModel();
+  const setShow = useModalStore((state) => (state.setShow));
   const [collapse, setCollapse] = useState<boolean>(false);
 
   const {name, setName} = useNodeNameState();
@@ -80,8 +76,13 @@ export default function Sidebar() {
     setCollapse(!collapse);
   }
 
+  const handleGenerateButtonClick = () => {
+    RunPython(model.serialize());
+    setShow(true);
+  }
+
   return <>
-    <GenerateCodeButton toggle={collapse} onClick={() => (RunPython(model.serialize()))}>
+    <GenerateCodeButton toggle={collapse} onClick={handleGenerateButtonClick}>
       Generate Code!
     </GenerateCodeButton>
 
