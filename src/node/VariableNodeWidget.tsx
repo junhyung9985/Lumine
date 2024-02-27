@@ -10,24 +10,12 @@ export interface VariableNodeProps {
 	engine: DiagramEngine;
 }
 
-const Wrap = styled.div<{
-  activated:boolean
-}>`
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  border:2px solid ${props => props.activated ? "white" : "black"};
-  border-radius:10px;
-`;
-
-const PortWrap = styled.div`
+const Wrap = styled.div`
   display: flex;
-  gap: 10px;
-  margin-top: 7px;
-  margin-bottom: 10px;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  
+  min-width:100px;
+  align-items: stretch;
 `;
 
 const Port = styled.div<{ isInput: boolean }>`
@@ -38,49 +26,57 @@ const Port = styled.div<{ isInput: boolean }>`
   align-self: center;
 `;
 
-const Head = styled.div`
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background-color:black;
-  border-top-right-radius:8px;
-  border-top-left-radius:8px;
-`
+const Body = styled.div<{ activated: boolean; }>`
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: gray;
+  color: white;
+  
+  border: 2px solid ${(props) => (props.activated ? "white" : "black")};
+  border-radius: 5px;
 
-const Body = styled.div`
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#595959;
-  gap:10px;
-  color:white;
-  min-width:70px;
-  min-height:40px;
-  border-radius: 0px 0px 10px 10px;
-`
+  & > .title {
+    background-color: rgb(0 0 0 / 30%);
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  & > .name {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:30px;
+    padding: 10px;
+  }
+`;
+
 
 export function VariableNodeWidget(props:VariableNodeProps) {
   const inputPort = props.node.getInputPort();
   const outputPort = props.node.getOutputPort();
-
-  return <Wrap activated={props.node.isSelected()}>
-    <Head>
-      {props.node.size}
-    </Head>
-    <Body >
-      <PortWrap>
-        <PortWidget port={inputPort} engine={props.engine}>
+  return <Wrap>
+    <Body
+      activated={props.node.isSelected()}
+    >
+      <div className="title">
+        <PortWidget port={inputPort} engine={new DiagramEngine()}>
           <Port isInput={true} />
         </PortWidget>
-      </PortWrap>
-      
-      {props.node.name}
-
-      <PortWrap>
-        <PortWidget port={outputPort} engine={props.engine}>
+        <div>
+          {props.node.size}
+        </div>
+        
+        <PortWidget port={outputPort} engine={new DiagramEngine()}>
           <Port isInput={false} />
         </PortWidget>
-      </PortWrap>
+      </div>
+      <div className="name">{props.node.name}</div>
     </Body>
   </Wrap>
 }
