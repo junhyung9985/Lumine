@@ -68,6 +68,8 @@ export default function Sidebar() {
   const node = useCanvasStore((state) => (state.selectedNode));
   const model = useCanvasStore((state) => (state.engine)).getModel();
   const setShow = useModalStore((state) => (state.setShow));
+  const setModalContent = useModalStore((state)=>state.setModalContent);
+
   const [collapse, setCollapse] = useState<boolean>(false);
 
   const {name, setName} = useNodeNameState();
@@ -77,7 +79,7 @@ export default function Sidebar() {
   }
 
   const handleGenerateButtonClick = () => {
-    RunPython(model.serialize());
+    RunPython(model.serialize()).then(content => setModalContent(content));
     setShow(true);
   }
 

@@ -216,23 +216,16 @@ def WritePyTorch(nodes : List[Layer | Variable],  structure : List[List[int]], s
 
 ####################################### WRITING LOGIC #######################################################
 
-
+global result
 
 # Test : Simple MLP consisted of 3 layers, Linear(5,4) -> ReLU -> Linear(4,3) -> Softmax -> Linear(3,1) -> Sigmoid
-if __name__ == '__main__':
-    print(len(sys.argv))
-
-    if(len(sys.argv) > 1):
-        nodes, node_idx, structure, structure2, ind, inputs, outputs = JsonParse(sys.argv[1])
-        result = WritePyTorch(nodes, structure, structure2, inputs, outputs, ind)
-        print(result)
-
-    else :
-        print("ERROR : Cannot find JSON string.")
-    # mock_structure = [[0,1,0],[0,0,1],[0,0,0]]
-    # mock_nodes = [Layer('m1','linear',5,4,'relu'), Layer('m2', 'linear',4,3,'softmax'), Layer('m3','linear',3,1,'sigmoid')]
-    # path = "./"
-    # input = [Variable('x',[0],[])]
-    # output = [Variable('y',[2],[])]
-    # print(WritePyTorch(mock_structure, mock_nodes, path, input,output))
-    
+#if __name__ == '__main__':
+if(len(sys.argv) == 1):
+    print("ERROR : Cannot find JSON string.")
+    dummy = ""
+    dummy
+    exit(-1)
+nodes, node_idx, structure, structure2, ind, inputs, outputs = JsonParse(sys.argv[1])
+result = WritePyTorch(nodes, structure, structure2, inputs, outputs, ind)
+print(result)
+result

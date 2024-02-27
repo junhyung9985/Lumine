@@ -6,6 +6,5 @@ export default async function RunPython(json : object){
     indexURL:"https://cdn.jsdelivr.net/pyodide/v0.25.0/full/",
     args:['src_file_name???', JSON.stringify(json)]
   });
-  pyodide.runPythonAsync(src);
-  console.log("Loaded Pyodide");
+  return pyodide.runPythonAsync(src);
 }
