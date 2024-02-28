@@ -184,6 +184,9 @@ def WritePyTorch(nodes : List[Layer | Variable],  structure : List[List[int]], s
                 else:
                     print("ERROR : UNAVAILABLE INPUT")
                     exit(-1)
+            if nodes[idx].activation != None:
+                s+= "\t\tout_{} = self.{}_act(out_{})\n".format(nodes[idx].name, nodes[idx].name, nodes[idx].name)
+                
         elif(type(nodes[idx]) == Variable):
             for bef_node in structure2[idx]:
                 if type(nodes[bef_node]) == Layer:
