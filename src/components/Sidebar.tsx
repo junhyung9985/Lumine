@@ -7,7 +7,7 @@ import useNodeNameState from "../hooks/useNodeNameState";
 import NodeSettings from "./Sidebar/NodeSettings";
 import ProjectSettings from "./Sidebar/ProjectSettings";
 import { Button } from "./Button";
-import { useModalStore } from "../store/ModalStore";
+import { useModalStore, ModalState } from "../store/ModalStore";
 
 const Wrap = styled.div<{toggle:boolean}>`
   position:fixed;
@@ -66,9 +66,10 @@ const GenerateCodeButton = styled(Button)<{toggle:boolean}>`
 
 export default function Sidebar() {
   const node = useCanvasStore((state) => (state.selectedNode));
-  const model = useCanvasStore((state) => (state.engine)).getModel();
+  const engine = useCanvasStore((state) => (state.engine));
   const setShow = useModalStore((state) => (state.setShow));
   const setModalContent = useModalStore((state)=>state.setModalContent);
+  const setModalState = useModalStore((state) => (state.setModalState));
 
   const [collapse, setCollapse] = useState<boolean>(false);
 
@@ -78,9 +79,21 @@ export default function Sidebar() {
     setCollapse(!collapse);
   }
 
-  const handleGenerateButtonClick = () => {
-    RunPython(model.serialize()).then(content => setModalContent(content));
+  const handleGenerateButtonClick = async () => {
+    setModalState(ModalState.PENDING);
     setShow(true);
+
+    try {
+      setModalContent(await RunPython(engine.getModel().serialize()));
+    }
+    catch (e) {
+      console.error(e);
+      setModalState(ModalState.ERROR);
+      setModalContent(e as string);
+      throw new Error(e as string);
+    }
+
+    setModalState(ModalState.SUCCESS);
   }
 
   return <>

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { useModalStore } from "../store/ModalStore"
+import { ModalState, useModalStore } from "../store/ModalStore"
 import CodeEditor from "@uiw/react-textarea-code-editor";
 
 const ModalWindow = styled.div<{show:boolean}>`
@@ -42,6 +42,7 @@ export default function Modal() {
   const isShown = useModalStore((state) => state.isShown);
   const setShow = useModalStore((state) => state.setShow);
   const modalContent = useModalStore((state) => state.modalContent);
+  const modalState = useModalStore((state) => (state.modalState));
 
   const handleModalBackgroundClick = () => {
     setShow(false);
@@ -50,19 +51,25 @@ export default function Modal() {
     e.stopPropagation();
   }
   return <ModalWindow onClick={handleModalBackgroundClick} show={isShown}>
-   <ModalContentWrapper onClick={handleModalWindowClick}>
-      <title>
-        Generated Code
-      </title>
-      <div>
-        ctrl(cmd) + a and copy the code!
-      </div>
-      <CodeEditor 
-        value={modalContent}
-        language="python"
-        padding={15}
-        style={CodeEditorStyle}
-      />
+    <ModalContentWrapper onClick={handleModalWindowClick}>
+      {
+        modalState == ModalState.PENDING ? "loading..." :
+        <>
+          <title>
+            Generated Code
+          </title>
+          <div>
+            ctrl(cmd) + a and copy the code!
+          </div>
+          <CodeEditor 
+            value={modalContent}
+            language="python"
+            padding={15}
+            style={CodeEditorStyle}
+            tabIndex={4}
+          />
+        </>
+      }
     </ModalContentWrapper>
   </ModalWindow>
 }
