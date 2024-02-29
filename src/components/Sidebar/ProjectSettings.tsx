@@ -27,7 +27,8 @@ const ImportButton = styled(Button)`
 
 export default function ProjectSettings() {
   const engine = useCanvasStore((state) => (state.engine));
-  const setModel = useCanvasStore((state) => (state.setModel));
+  const deserialize = useCanvasStore((state) => state.deserialize);
+  const selectNode = useCanvasStore((state) => (state.selectNode));
   const handleImport:React.ChangeEventHandler<HTMLInputElement> = (e) => {
     if(!e.target.files) return;
     console.log(e.target.files);
@@ -37,11 +38,9 @@ export default function ProjectSettings() {
     try {
       reader.readAsText(e.target.files[0]);
       reader.onloadend = () => {
-        const newModel = new DiagramModel();
-        console.log(reader.result);
-        console.log(JSON.parse(reader.result as string));
-        newModel.deserializeModel(JSON.parse(reader.result as string), engine.getEngine());
-        setModel(newModel);
+        deserialize(reader.result as string);
+        selectNode(undefined);
+        engine.getEngine().repaintCanvas();
       }
     } catch (e) {
       throw new Error("Cannot load model from uploaded data.");
@@ -53,6 +52,7 @@ export default function ProjectSettings() {
     const data = new Blob([JSON.stringify(engine.getModel().serialize())], {
       type:"application/json"
     });
+    aTag.target = "_blank";
     aTag.href = URL.createObjectURL(data);
     aTag.download = "model.json";
     aTag.click();

@@ -79,7 +79,7 @@ type CanvasStore = {
   engine: GraphCodeCanvas;
   selectedNode?: NodeModel;
   setModel: (model: DiagramModel) => void;
-  selectNode: (node:NodeModel) => void;
+  selectNode: (node?:NodeModel) => void;
   addNode: (node: NodeModel) => void;
   deserialize: (dataStr: string) => void;
 };
@@ -128,8 +128,9 @@ export const useCanvasStore = create<CanvasStore>((set) => ({
   deserialize: (dataStr) => {
     const data = JSON.parse(dataStr);
     set((state) => {
-      state.engine.getModel().deserializeModel(data, state.engine.getEngine());
-      state.engine.getModel().getNodes().forEach((value) => {
+      const model = new DiagramModel();
+      model.deserializeModel(data, state.engine.getEngine());
+      model.getNodes().forEach((value) => {
         value.registerListener({
           selectionChanged() {
             set(() => ({
@@ -138,6 +139,7 @@ export const useCanvasStore = create<CanvasStore>((set) => ({
           },
         });
       });
+      state.engine.setModel(model);
       return { ...state };
     });
   },
