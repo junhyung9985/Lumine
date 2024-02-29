@@ -71,7 +71,7 @@ export default function Sidebar() {
   const setModalContent = useModalStore((state)=>state.setModalContent);
   const setModalState = useModalStore((state) => (state.setModalState));
 
-  const [collapse, setCollapse] = useState<boolean>(false);
+  const [collapse, setCollapse] = useState<boolean>(true);
 
   const {name, setName} = useNodeNameState();
 
