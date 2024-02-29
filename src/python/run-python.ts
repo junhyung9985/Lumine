@@ -1,5 +1,5 @@
 import { loadPyodide } from "pyodide";
-import src from "./prototype.py?raw";
+import src from "./logic.py?raw";
 
 export default async function RunPython(json : object){
   const pyodide = await loadPyodide({

@@ -85,7 +85,7 @@ def JsonParse(json_str : str):
         cnt += 1
 
         if(dic['layers'][1]['models'][node_id]['type'] == 'layer'):
-            nodes.append(Layer(infos['name'],infos['layerType'],infos['inputNum'], infos['outputNum'], infos['activation']))
+            nodes.append(Layer(infos['name'],infos['layerType'],infos['inputNum'], infos['outputNum'], None if infos['activation'] == 'none' else infos['activation']))
         elif(dic['layers'][1]['models'][node_id]['type'] == 'variable'):
             nodes.append(Variable(infos['name']))
         else :
