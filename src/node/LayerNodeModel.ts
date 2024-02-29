@@ -8,6 +8,7 @@ export enum LayerPortType {
 
 export enum ActivationType {
   UNDEFINED = "undefined",
+  NONE = "none",
   SIGMOID = "sigmoid",
   RELU = "relu",
   SOFTMAX = "softmax"

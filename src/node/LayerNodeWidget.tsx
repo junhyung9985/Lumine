@@ -12,6 +12,7 @@ const ActivationColor: Record<ActivationType, string> = {
   [ActivationType.SIGMOID]: "#ffffff",
   [ActivationType.RELU]: "#ffffff",
   [ActivationType.SOFTMAX]: "#ffffff",
+  [ActivationType.NONE] : "#ffffff",
 };
 
 const ActivationBackground: Record<ActivationType, string> = {
@@ -19,6 +20,7 @@ const ActivationBackground: Record<ActivationType, string> = {
   [ActivationType.SIGMOID]: "#7F27FF",
   [ActivationType.RELU]: "#D04848",
   [ActivationType.SOFTMAX]: "#40A2E3",
+  [ActivationType.NONE]: "#ff862a",
 };
 
 const Wrap = styled.div`

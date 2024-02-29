@@ -9,6 +9,10 @@ interface LayerNodeSidebarProps {
 
 const ActivationTypeView = [
   {
+    name: "None",
+    value: ActivationType.NONE,
+  },
+  {
     name: "Sigmoid",
     value: ActivationType.SIGMOID,
   },
@@ -20,6 +24,7 @@ const ActivationTypeView = [
     name: "Soft-max",
     value: ActivationType.SOFTMAX,
   },
+  
 ];
 
 export default function LayerNodeSidebar(param: LayerNodeSidebarProps) {
@@ -88,7 +93,7 @@ export default function LayerNodeSidebar(param: LayerNodeSidebarProps) {
       </div>
       <div>
         <title>
-          Node Type
+          Activation Type
         </title>
         <select
           name="activation-type"
