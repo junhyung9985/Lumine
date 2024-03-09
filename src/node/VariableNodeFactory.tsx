@@ -12,7 +12,7 @@ export class VariableNodeFactory extends AbstractReactFactory<VariableNodeModel,
 		return <VariableNodeWidget node={event.model} engine={this.engine} />;
 	}
 
-	generateModel(event:any) {
+	generateModel(_event:any) {
 		return new VariableNodeModel();
 	}
 }

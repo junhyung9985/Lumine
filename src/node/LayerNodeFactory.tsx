@@ -12,7 +12,7 @@ export class LayerNodeFactory extends AbstractReactFactory<LayerNodeModel, Diagr
 		return <LayerNodeWidget node={event.model} engine={this.engine} />;
 	}
 
-	generateModel(event:any) {
+	generateModel(_event:any) {
 		return new LayerNodeModel();
 	}
 }

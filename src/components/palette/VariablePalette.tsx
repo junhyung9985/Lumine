@@ -9,7 +9,7 @@ const VariableItemWrap = styled(ItemWrap)`
   top: -3px;
 `;
 
-export default function Variable() {
+export default function VariablePalette() {
   const addNode = useCanvasStore((state) => state.addNode);
   const engine = useCanvasStore((state) => (state.engine));
 

@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { Button } from "../Button";
 import { Wrap } from "./Settings";
 import { useCanvasStore } from "../../store/CanvasStore";
-import { DiagramModel } from "@projectstorm/react-diagrams";
 
 const ProjectSettingsWrap = styled(Wrap)`
   input#file {

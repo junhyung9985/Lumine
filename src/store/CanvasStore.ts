@@ -12,32 +12,32 @@ import { LayerNodeFactory } from "../node/LayerNodeFactory";
 import { CustomPortFactory } from "../port/CustomPortFactory";
 import { VariableNodeFactory } from "../node/VariableNodeFactory";
 
-class GraphCodeModel {
-  /**
-   * gonna add multi model management system, later on
-   *
-   *
-   * GraphCodeModel might have features written below.
-   *
-   * 1. do automatically add all factories where the factories are.
-   */
-  currentModel: DiagramModel;
-  constructor(model?: DiagramModel) {
-    if (model) this.currentModel = model;
-    else this.currentModel = new DiagramModel();
+// class GraphCodeModel {
+//   /**
+//    * gonna add multi model management system, later on
+//    *
+//    *
+//    * GraphCodeModel might have features written below.
+//    *
+//    * 1. do automatically add all factories where the factories are.
+//    */
+//   currentModel: DiagramModel;
+//   constructor(model?: DiagramModel) {
+//     if (model) this.currentModel = model;
+//     else this.currentModel = new DiagramModel();
 
-    this.currentModel.clearListeners();
-  }
-  getModel() {
-    return this.currentModel;
-  }
-  addNode(node: NodeModel, pos?: { x: number; y: number }) {
-    if (pos) {
-      node.setPosition(pos.x, pos.y);
-    }
-    this.currentModel.addNode(node);
-  }
-}
+//     this.currentModel.clearListeners();
+//   }
+//   getModel() {
+//     return this.currentModel;
+//   }
+//   addNode(node: NodeModel, pos?: { x: number; y: number }) {
+//     if (pos) {
+//       node.setPosition(pos.x, pos.y);
+//     }
+//     this.currentModel.addNode(node);
+//   }
+// }
 
 export class GraphCodeCanvas {
   private static engine: DiagramEngine | null = null;

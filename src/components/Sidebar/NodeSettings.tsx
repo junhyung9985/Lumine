@@ -1,4 +1,3 @@
-import styled from "@emotion/styled"
 import { NodeModel } from "@projectstorm/react-diagrams";
 import { ChangeEventHandler } from "react";
 import { VariableNodeModel } from "../../node/VariableNodeModel";

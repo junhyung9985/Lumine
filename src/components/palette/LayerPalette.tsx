@@ -14,7 +14,7 @@ const NodeSVG = (
   </svg>
 );
 
-export default function Layer() {
+export default function LayerPalette() {
   const engine = useCanvasStore((state) => (state.engine));
   const addNode = useCanvasStore((state) => state.addNode);
 
