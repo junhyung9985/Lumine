@@ -119,7 +119,7 @@ def specify(layer : Layer) -> str:
             node : Node object to specify which layer does it covers.
     '''
     s = ""
-    if(layer.name =='linear'): s+="nn.Linear"
+    if(layer.layer_type =='linear'): s+="nn.Linear"
     s +='(' + str(layer.input)+','+str(layer.output)+')'
     return s
 
