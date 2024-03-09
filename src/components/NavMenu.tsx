@@ -42,7 +42,7 @@ export default function NavMenu() {
   return <Wrap>
     <Menu>
       <HomeTitle>
-        Graph 2 Code
+        Lumine
       </HomeTitle>
       <Palette />
     </Menu>
