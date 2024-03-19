@@ -14,7 +14,7 @@ export default function VariablePalette() {
   const engine = useCanvasStore((state) => (state.engine));
 
   const handleClick = () => {
-    addNode(new VariableNodeModel("Variable", 1));
+    addNode(new VariableNodeModel("variable", 3));
     engine.getEngine().repaintCanvas();
   }
 

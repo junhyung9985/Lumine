@@ -17,11 +17,11 @@ const ActivationTypeView = [
     value: ActivationType.SIGMOID,
   },
   {
-    name: "Relu",
+    name: "ReLU",
     value: ActivationType.RELU,
   },
   {
-    name: "Soft-max",
+    name: "Softmax",
     value: ActivationType.SOFTMAX,
   },
   
